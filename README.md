@@ -21,12 +21,14 @@ Imagine you are a leading trading firm specializing in market making for a singl
 3. **Understand the `update` Method**
    - The `update` method has the following signature:
      ```python
-     def update(self, prev_bid_price, prev_ask_price, timestamp) -> Tuple[float, int, float, int, OrderType]:
+     def update(self, prev_bid_price, prev_ask_price, holding, moneny, timestamp) -> Tuple[float, int, float, int, OrderType]:
          pass
      ```
    - **Inputs:**
      - `prev_bid_price` (float): The price at which the simulated market was willing to buy the asset in the previous interval.
      - `prev_ask_price` (float): The price at which the simulated market was willing to sell the asset in the previous interval.
+     - `holding`: (int) the number of stocks you are holding from previous interval
+     - `money`: (float) the money you have from previous interval.
      - `timestamp` (int): The timestamp of the current interval.
    - **Outputs:**
      - A tuple containing:
@@ -48,9 +50,14 @@ Imagine you are a leading trading firm specializing in market making for a singl
      ```
 
 6. **Execute the Simulation**
-   - Run the simulation using:
+   - Run the full simulation using:
      ```sh
      python main.py
+     ```
+
+   - Quick run for test
+     ``` sh
+     python main.py -f
      ```
 
 ## Logs
@@ -67,7 +74,7 @@ Your market-making strategy will be evaluated based on the following criteria:
 
 The winner of the competition will be the participant who demonstrates the most effective and profitable market-making strategy.
 
-To submit, create a pull request from your repo to the this repo. The stratergy will be run 10 time and average profit will be use for #1 criteria. #2 and #3 criteria is tested again the market simulation.
+Submission system comming soon!
 
 ## Leaderboard
 **Coming soon**

@@ -17,6 +17,9 @@ INIT_SELL = 99.5
 # Initial money
 START_MONEY = 10000
 
+FAST_INTERVAL = 60*10
+FAST_START_MONEY = 1000
+
 class Simulation():
     """
     A class to simulate the market maker game.
@@ -44,7 +47,7 @@ class Simulation():
         Check the current market and update the market maker. Make sure that input is valid before
         putting it into the market maker.
         """
-        buy, vb, sell, vs, order_type = self.market_maker.update(prevBuy, prevSell, timestamp)
+        buy, vb, sell, vs, order_type = self.market_maker.update(prevBuy, prevSell, self.holding, self.money, timestamp)
         if(buy < 0):
             if(logging):
                 self.logger.warning("Buy price is negative, setting volume to 0")
@@ -175,7 +178,7 @@ class Simulation():
 
         return 0.0 - (market_sell * volume_buy) + (market_buy * volume_sell)
 
-    def run(self, logging = False):
+    def run(self, fast= False, logging = False):
         """
         Runs the market simulation for a predefined number of intervals.
         """
@@ -190,7 +193,13 @@ class Simulation():
             self.logger.log(f"Initial Market: Buy: {mmBuy} Sell: {mmSell}")
             self.logger.spacing()
 
-        while(i < INTERVAL):
+        interval = INTERVAL
+
+        if(fast):
+            self.money = FAST_START_MONEY
+            interval = FAST_INTERVAL
+
+        while(i < interval):
             mb, vb, mS, vs, OrderType = self.checkAndUpdate(mmBuy, mmSell, i, logging)
             if(logging):
                 self.logger.log(f"Interval: {i}")
