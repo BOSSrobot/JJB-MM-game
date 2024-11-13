@@ -246,7 +246,7 @@ class Simulation():
 
             self.profit.append(profit)
             if(logging):
-                self.logger.log(f"Profit: {self.holding * (self.mmSell[-1]) + self.money - self.get_original_money} Net change: {profit} Holding: {self.holding}")
+                self.logger.log(f"Profit: {self.holding * (self.mmSell[-1]) + self.money - self.get_original_money()} Net change: {profit} Holding: {self.holding}")
                 self.logger.log(f"Cash: {self.money}")
                 self.logger.spacing()
             i += 1
