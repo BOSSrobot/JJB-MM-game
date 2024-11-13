@@ -70,6 +70,15 @@ class Simulation():
             vs = self.holding
         return buy, vb, sell, vs, order_type
     
+    def get_original_money(self):
+        if(self.mode == "fast"):
+            return FAST_START_MONEY
+        return START_MONEY
+
+    def get_final_profit(self):
+
+        return self.holding * (self.mmSell[-1]) + self.money - self.get_original_money()
+    
     def reset(self):
         self.start_time = datetime.now()
         log_filename = f"log/{self.start_time.strftime('%Y%m%d_%H%M%S')}.log"
@@ -84,6 +93,7 @@ class Simulation():
         self.profit = []
         self.holding = 0
         self.limit_order_queue = []
+        self.mode = "normal"
 
     def executeLimitOrders(self, market_sell, market_buy, timestamp, logging = False):
         """
@@ -198,6 +208,7 @@ class Simulation():
         if(fast):
             self.money = FAST_START_MONEY
             interval = FAST_INTERVAL
+            self.mode = "fast"
 
         while(i < interval):
             mb, vb, mS, vs, OrderType = self.checkAndUpdate(mmBuy, mmSell, i, logging)
@@ -235,19 +246,20 @@ class Simulation():
 
             self.profit.append(profit)
             if(logging):
-                self.logger.log(f"Profit: {self.holding * (self.mmSell[-1]) + self.money - START_MONEY} Net change: {profit} Holding: {self.holding}")
+                self.logger.log(f"Profit: {self.holding * (self.mmSell[-1]) + self.money - self.get_original_money} Net change: {profit} Holding: {self.holding}")
                 self.logger.log(f"Cash: {self.money}")
                 self.logger.spacing()
             i += 1
     
     def summarize(self, logging = False):
-        print(f"Total profit: {self.holding * (self.mmSell[-1]) + self.money - START_MONEY}")
+        start_money = self.get_original_money()
+        print(f"Total profit: {self.holding * (self.mmSell[-1]) + self.money - start_money}")
         print(f"Total holding: {self.holding} at price {self.mmSell[-1]} for a total of {self.holding * self.mmSell[-1]}")
         print(f"Total cash: {self.money}")
 
         if(logging):
             self.logger.log("Simulation End")
-            self.logger.log(f"Total profit: {self.holding * (self.mmSell[-1]) + self.money - START_MONEY}")
+            self.logger.log(f"Total profit: {self.holding * (self.mmSell[-1]) + self.money - start_money}")
             self.logger.log(f"Total cash: {self.money}")
             self.logger.log(f"Total holding: {self.holding} at price {self.mmSell[-1]} for a total of {self.holding * self.mmSell[-1]}")
             self.logger.spacing()
