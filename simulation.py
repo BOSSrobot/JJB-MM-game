@@ -41,6 +41,7 @@ class Simulation():
         self.money = START_MONEY
         # format: [price, volume, buy/sell, from_time, to_time]
         self.limit_order_queue = []
+        self.mode = "normal"
 
     def checkAndUpdate(self, prevBuy, prevSell, timestamp, logging = False)  -> Tuple[float, int, float, int, OrderType]:
         """
