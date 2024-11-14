@@ -12,7 +12,7 @@ def admin_run(logging=False):
         sim = Simulation(mm)
         sim.run(logging=False, fast=False)
         profit = sim.get_final_profit()
-        if(logging):
+        if logging:
             print(profit, math.isnan(profit))
         if math.isnan(profit):
             continue
@@ -21,4 +21,4 @@ def admin_run(logging=False):
 
     print(f"Average profit: {sum_profit/DURATION}")
 
-admin_run(True)
+admin_run()

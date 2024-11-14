@@ -1,10 +1,12 @@
 class Logger:
     def __init__(self, log_file):
         self.log_file = log_file
+        self.f = None
 
     def log(self, message):
-        with open(self.log_file, 'a') as f:
-            f.write(message + '\n')
+        if self.f is None:
+            self.f = open(self.log_file, 'a')
+        self.f.write(message + '\n')
 
     def error(self, message):
         self.log(f'[ERROR]:   {message}')
