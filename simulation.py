@@ -136,7 +136,7 @@ class Simulation():
                 self.limit_order_queue.remove(order)
                 profit += price * volume
 
-            if buy_sell == "buy" and price <= market_sell and self.money >= 0:
+            if buy_sell == "buy" and price <= market_sell and market_sell > 0 and self.money >= 0:
                 if(logging):
                     self.logger.info(f"Executing Limit Order: Buying at {market_buy} with limit price at {price} for {volume}")
                 max_buyable_volume = floor(self.money / market_sell)
@@ -166,8 +166,9 @@ class Simulation():
         :param volume_sell: the volume to sell
         :param logging: whether to log the execution of market orders
         """
-        
-        max_buyable_volume = floor(self.money / market_sell)
+        max_buyable_volume = 0
+        if(market_sell > 0):
+            max_buyable_volume += floor(self.money / market_sell)
         if volume_buy > max_buyable_volume:
             volume_buy = max_buyable_volume
             if(logging):

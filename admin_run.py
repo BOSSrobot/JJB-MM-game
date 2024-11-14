@@ -1,7 +1,7 @@
 from simulation import Simulation
 from maker import SimpleMarketMaker as MarketMaker
 
-DURATION = 100
+DURATION = 10
 
 def admin_run(logging=False):
     sum_profit = 0
