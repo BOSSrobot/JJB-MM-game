@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Tuple, Literal
+import numpy as np
 
 @dataclass
 class OrderType:
@@ -75,33 +76,88 @@ class SimpleMarketMaker(MarketMaker):
         An example on how to implement a market maker.
         """
         def __init__(self):
-             pass
-        
-        # TODO: Replace this example with your strategy
+            self.prev_bid_history = []
+            self.prev_ask_history = []
+            
+            self.window = 10
+            self.simulations = 10
+            self.sim_horizon = 3
+            
+            self.counter = 10
+            
+                      
+        """
+        Example on how to implement the update method for the market maker.
+
+        This example will return the previous bid price and ask price, and the volume to buy and sell
+        as 100, and a new limit order with the timestamp and timestamp + 100.
+
+        To return a market order, you can use OrderType.new_market_order(timestamp)
+        ```
+        return prev_bid_price, 100, prev_ask_price, 100, OrderType.new_market_order(timestamp)
+        ```
+        For market order, the limit price will be defaulted to the market bid and ask price.
+
+        Note that the volume to buy and sell can be any integer value, including 0. If the volume is negative,
+        it will be set to 0. If the volume to sell is more than the holding, it will be set to the holding.
+
+        :param prev_bid_price: the previous bid price
+        :param prev_ask_price: the previous ask price
+        :param holding: the number of stocks you are holding from previous interval
+        :param money: the amount of money you have from previous interval
+        :param timestamp: the timestamp of the current (not previous) interval
+
+        :return: a tuple containing the new bid price limit, the volume to buy, the new ask price limit,
+        the volume to sell, and the order type as OrderType object
+
+        """
         def update(self, prev_bid_price, prev_ask_price, holding, money, timestamp) -> Tuple[float, int, float, int, OrderType]:
-            """
-            Example on how to implement the update method for the market maker.
+                        
+            self.prev_bid_history.append(prev_bid_price)
+            self.prev_ask_history.append(prev_ask_price)
+            
+            mean, std = self.simulate()
+            
+            buy_dev = std * -0.1
+            sell_dev = std * 0.1
+            
+            max_buy_price = prev_bid_price + buy_dev
+            max_sell_price = prev_ask_price + sell_dev
+            
+            return max_buy_price, int(money/max_buy_price - 1) // 2, max_sell_price, holding//2, OrderType.new_limit_order(timestamp, timestamp + 100)
+        
+        def simulate(self): 
+            if len(self.prev_bid_history) < self.window: 
+                avg_orig_price = (self.prev_bid_history[0] + self.prev_ask_history[0])/2
+                return avg_orig_price, 0.05 * avg_orig_price
+           
+            self.counter = self.counter - 1
+            counter = self.counter 
+            
+            if counter > 0: 
+                print("RUNNN")
 
-            This example will return the previous bid price and ask price, and the volume to buy and sell
-            as 100, and a new limit order with the timestamp and timestamp + 100.
-
-            To return a market order, you can use OrderType.new_market_order(timestamp)
-            ```
-            return prev_bid_price, 100, prev_ask_price, 100, OrderType.new_market_order(timestamp)
-            ```
-            For market order, the limit price will be defaulted to the market bid and ask price.
-
-            Note that the volume to buy and sell can be any integer value, including 0. If the volume is negative,
-            it will be set to 0. If the volume to sell is more than the holding, it will be set to the holding.
-
-            :param prev_bid_price: the previous bid price
-            :param prev_ask_price: the previous ask price
-            :param holding: the number of stocks you are holding from previous interval
-            :param money: the amount of money you have from previous interval
-            :param timestamp: the timestamp of the current (not previous) interval
-
-            :return: a tuple containing the new bid price limit, the volume to buy, the new ask price limit,
-            the volume to sell, and the order type as OrderType object
-
-            """
-            return prev_bid_price, 100, prev_ask_price, 100, OrderType.new_limit_order(timestamp, timestamp + 100)
+                print(self.prev_bid_history, self.prev_ask_history)
+            
+            price_history = (np.array(self.prev_bid_history[-self.window:]) + np.array(self.prev_ask_history[-self.window:])) / 2
+            diffs = np.diff(np.log(price_history))
+            
+            if counter > 0: 
+                print(diffs)
+            
+            std = np.std(diffs) ** 2
+            drift = np.mean(diffs) + std ** 2 / 2
+            
+            if counter > 0: 
+                print(std, drift)
+            
+            future = []
+            for _ in range(self.simulations): 
+                future.append(np.cumsum(np.random.normal(drift, std, self.sim_horizon)))
+                
+            future_prices_estimates = price_history[-1] * np.exp(np.array(future))
+            
+            if counter > 0: 
+                print(np.mean(future_prices_estimates), np.std(future_prices_estimates))
+            
+            return np.mean(future_prices_estimates), np.std(future_prices_estimates)  
