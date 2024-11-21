@@ -11,8 +11,8 @@ import numpy as np
 INTERVAL = 60*390
 
 # Initial buy and sell prices
-INIT_BUY = 100.5
-INIT_SELL = 99.5
+INIT_BUY = 99.5
+INIT_SELL = 100.5
 
 # Initial money
 START_MONEY = 10000
