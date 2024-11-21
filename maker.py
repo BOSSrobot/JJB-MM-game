@@ -82,9 +82,6 @@ class SimpleMarketMaker(MarketMaker):
             self.window = 10
             self.simulations = 10
             self.sim_horizon = 3
-            
-            self.counter = 10
-            
                       
         """
         Example on how to implement the update method for the market maker.
@@ -130,34 +127,17 @@ class SimpleMarketMaker(MarketMaker):
             if len(self.prev_bid_history) < self.window: 
                 avg_orig_price = (self.prev_bid_history[0] + self.prev_ask_history[0])/2
                 return avg_orig_price, 0.05 * avg_orig_price
-           
-            self.counter = self.counter - 1
-            counter = self.counter 
-            
-            if counter > 0: 
-                print("RUNNN")
-
-                print(self.prev_bid_history, self.prev_ask_history)
             
             price_history = (np.array(self.prev_bid_history[-self.window:]) + np.array(self.prev_ask_history[-self.window:])) / 2
             diffs = np.diff(np.log(price_history))
             
-            if counter > 0: 
-                print(diffs)
-            
             std = np.std(diffs) ** 2
             drift = np.mean(diffs) + std ** 2 / 2
-            
-            if counter > 0: 
-                print(std, drift)
             
             future = []
             for _ in range(self.simulations): 
                 future.append(np.cumsum(np.random.normal(drift, std, self.sim_horizon)))
                 
             future_prices_estimates = price_history[-1] * np.exp(np.array(future))
-            
-            if counter > 0: 
-                print(np.mean(future_prices_estimates), np.std(future_prices_estimates))
-            
+
             return np.mean(future_prices_estimates), np.std(future_prices_estimates)  
