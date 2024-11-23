@@ -217,22 +217,22 @@ class SimpleMarketMaker(MarketMaker):
             prev_mm_ask_amt_history.append(holdings//2)
 
             return cur_bid, ((money//cur_bid)//2), cur_ask, holdings//2, OrderType.new_limit_order(timestamp, timestamp + 1)
-        
-        def simulate(self): 
-            if len(self.prev_bid_history) < self.window: 
-                avg_orig_price = (self.prev_bid_history[0] + self.prev_ask_history[0])/2
-                return avg_orig_price, 0.05 * avg_orig_price
-            
+      
+        def simulate(self):    
             price_history = (np.array(self.prev_bid_history[-self.window:]) + np.array(self.prev_ask_history[-self.window:])) / 2
-            diffs = np.diff(np.log(price_history))
+            diffs = np.diff(np.log(price_history[-self.window:]))
+
+            if len(self.prev_bid_history) < self.window:
+                avg_orig_price = (self.prev_bid_history[-1] + self.prev_ask_history[-1])/2
+                return avg_orig_price, np.std(price_history)
             
             std = np.std(diffs) ** 2
             drift = np.mean(diffs) + std ** 2 / 2
-            
-            future = []
-            for _ in range(self.simulations): 
-                future.append(np.cumsum(np.random.normal(drift, std, self.sim_horizon)))
-                
-            future_prices_estimates = price_history[-1] * np.exp(np.array(future))
 
-            return np.mean(future_prices_estimates), np.std(future_prices_estimates)  
+            future_prices = []
+            for _ in range(self.simulations): 
+                future_prices.append(price_history[-1] * np.exp(np.sum(np.random.normal(drift, std, self.sim_horizon))))
+
+            future_prices = np.array(future_prices)
+
+            return np.mean(future_prices), np.std(future_prices)

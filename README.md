@@ -1,5 +1,10 @@
 # Updates: 
 
+## 11/23 
+Bhaumik: 
+Fixed bug in simulate. Plotting utils show new version is much more accurate. Will start developing a new bot in 
+a separate branch. 
+
 ## 11/22
 Jasper:
 I am here.
@@ -85,7 +90,7 @@ Your market-making strategy will be evaluated based on the following criteria:
 
 The winner of the competition will be the participant who demonstrates the most effective and profitable market-making strategy.
 
-Submission system comming soon!
+Submission system coming soon!
 
 ## Leaderboard
 **Coming soon**

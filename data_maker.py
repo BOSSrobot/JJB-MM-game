@@ -89,6 +89,10 @@ def plot_defaults(data, additional_cols: List = None):
     if additional_cols: 
         columns_to_plot += additional_cols
     
+    plot(df, columns_to_plot)
+    
+def plot(df, columns_to_plot: List): 
+    
     fig, axes = plt.subplots(len(columns_to_plot), 1, figsize=(10, 2 * len(columns_to_plot)))
 
     for ax, column in zip(axes, columns_to_plot):
@@ -98,7 +102,7 @@ def plot_defaults(data, additional_cols: List = None):
         ax.set_ylabel(column)
 
     plt.tight_layout()
-    plt.show()
+    plt.show() 
     
 def run_mm(mm: MarketMaker): 
     
