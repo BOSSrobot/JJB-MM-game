@@ -1,5 +1,9 @@
 # Updates: 
 
+## 11/22
+Jasper:
+I am here.
+
 ## 11/21
 Bhaumik: 
 1. Added data_maker.py - this contains utils to keep track of data while implementing a market maker. The Jupyter Notebook demonstrates me testing it out on our original strategy, but ask me if you have questions. The only real change is that you inherit from DataMarketMaker instead of MarketMaker. Also, use run_mm_plus instead of writing the simulation running code yourself. Finally, if you want to track any other data points (as I do with our initial strategy in the notebook) you just need to configure a tracker in your init function and call an update function in the update function of your market maker. See my code in the Notebook if you are confused. Also, plot_defaults will plot all the tracked information automatically. If you decide to track additional information, pass that as a parameter to plot_defaults (again see the Notebook). 
